@@ -1,0 +1,17 @@
+## Title: Big Party Frames
+## Notes: Use player frame for party members
+## Author: Erian Kalil
+## Interface: 100207
+## Version: 1.0
+## SavedVariables: BPFDB
+
+## LIBS
+Libs\Load.xml
+
+## CONFIG
+Config\Load.xml
+
+## MODULES
+Modules\Load.xml
+
+BigPartyFrames.lua

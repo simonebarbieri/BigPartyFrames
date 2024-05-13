@@ -1,0 +1,4 @@
+<Ui xmlns='http://www.blizzard.com/wow/ui/'>
+  <Include file='PartyStyle.lua'/>
+  <Include file='PartyAuras.lua'/>
+</Ui>
