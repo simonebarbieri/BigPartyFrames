@@ -68,8 +68,8 @@ local function GetSortedAuras(partyMember, auraType)
     local sortedAuras = {}
     local auraIndex = 1
     while UnitAura("party"..partyMember, auraIndex, auraType) do
-        local _, icon, count, _, duration, expires = UnitAura("party"..partyMember, auraIndex, auraType)
-        table.insert(sortedAuras, {icon=icon, count=count, duration=duration, expires=expires, auraIndex=auraIndex})
+        local _, icon, count, _, duration, expires, source = UnitAura("party"..partyMember, auraIndex, auraType)
+        table.insert(sortedAuras, {icon=icon, count=count, duration=duration, expires=expires, source=source, auraIndex=auraIndex})
         auraIndex = auraIndex + 1
     end
     table.sort(sortedAuras, function(a, b)
@@ -107,6 +107,11 @@ local function SetAura(aura, auraType, partyMember, auraIndex)
                 timetext = math.floor(timeleft)
             end
             _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].CooldownText:SetAlpha(alpha)
+        end
+        if aura.source == "player" then
+            _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].Border:SetVertexColor(0, 1, 0)
+        else
+            _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].Border:SetVertexColor(1, 1, 1)
         end
         _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].CooldownText:SetText(timetext)
         _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].CountText:SetText(counttext)
