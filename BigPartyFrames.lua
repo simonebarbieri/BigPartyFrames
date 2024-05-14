@@ -1,6 +1,4 @@
-BPF_Core = BPF:NewModule("BPF_Core")
-
-function BPF_Core:OnEnable()
+function BPF:OnEnable()
     BPF:EnablePartyStyle()
     BPF:EnablePartyAuras()
 end

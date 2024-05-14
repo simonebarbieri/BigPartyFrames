@@ -2,16 +2,10 @@
 ## Notes: Use player frame for party members
 ## Author: Erian Kalil
 ## Interface: 100207
-## Version: 1.0
+## Version: 0.9.1
 ## SavedVariables: BPFDB
 
-## LIBS
 Libs\Load.xml
-
-## CONFIG
 Config\Load.xml
-
-## MODULES
-Modules\Load.xml
-
+Core\Load.xml
 BigPartyFrames.lua

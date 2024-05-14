@@ -1,4 +1,4 @@
-BPF = LibStub("AceAddon-3.0"):NewAddon("BPF", "AceEvent-3.0", "AceConsole-3.0")
+BPF = LibStub("AceAddon-3.0"):NewAddon("BPF", "AceConsole-3.0")
 
 function BPF:OnInitialize()
     -- Database Default profile
