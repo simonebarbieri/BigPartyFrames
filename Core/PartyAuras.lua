@@ -85,7 +85,7 @@ local function SetAura(aura, auraType, partyMember, auraIndex)
     if aura then
         _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex]:SetScript("OnEnter",function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetUnitBuff("party"..partyMember, aura.auraIndex)
+            GameTooltip:SetUnitAura("party"..partyMember, aura.auraIndex, auraType == "Buff" and "HELPFUL" or "HARMFUL")
         end)
 
         local counttext = ""
