@@ -2,7 +2,7 @@
 ## Notes: Use player frame for party members
 ## Author: Erian Kalil
 ## Interface: 100207
-## Version: 0.9.1
+## Version: 0.9.2
 ## SavedVariables: BPFDB
 
 Libs\Load.xml
