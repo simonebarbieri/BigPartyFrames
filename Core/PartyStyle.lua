@@ -35,12 +35,16 @@ function BPF:ClassPortraits(self)
 end
 
 function BPF:SetPartyMemberFrameStyle(self)
+    if not(string.match(self.unit, "party") and UnitInParty(self.unit)) then return end
     if self:IsForbidden() then return end
     if InCombatLockdown() then return end
 
     self:SetWidth(partyStyle.width)
     self:SetHeight(partyStyle.height)
     self.Texture:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn")
+    if self.state == "vehicle" then
+        self.Texture:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Vehicle")
+    end
     self.Texture:SetSize(partyStyle.width, partyStyle.height)
 
     self.HealthBar:SetSize(partyStyle.health_width, partyStyle.health_heigth)
@@ -87,7 +91,7 @@ function BPF:SetPartyMemberFrameStyle(self)
 end
 
 function BPF:EnablePartyStyle()
-    local hookFunctions = {
+    local partyMemberFrameHookFunctions = {
         "ToPlayerArt",
         "ToVehicleArt",
         "UpdateArt",
@@ -107,12 +111,23 @@ function BPF:EnablePartyStyle()
         "UpdateOnlineStatus",
         "UpdateAuras"
     }
+    local unitFrameHookFunctions = {
+        "UnitFrame_Update",
+        "UnitFramePortrait_Update",
+        "UnitFrame_UpdateTooltip",
+        "UnitFrame_OnEvent"
+    }
 
     for i=1, MAX_PARTY_MEMBERS do
         local PartyMemberFrame = PartyFrame["MemberFrame" .. i]
         if PartyMemberFrame then
-            for _, func in pairs(hookFunctions) do
+            for _, func in pairs(partyMemberFrameHookFunctions) do
                 hooksecurefunc(PartyMemberFrame, func, function(self)
+                    BPF:SetPartyMemberFrameStyle(self)
+                end)
+            end
+            for _, func in pairs(unitFrameHookFunctions) do
+                hooksecurefunc(func, function(self)
                     BPF:SetPartyMemberFrameStyle(self)
                 end)
             end
