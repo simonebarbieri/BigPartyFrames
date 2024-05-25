@@ -108,11 +108,15 @@ local function SetAura(aura, auraType, partyMember, auraIndex)
             end
             _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].CooldownText:SetAlpha(alpha)
         end
-        if aura.source == "player" then
-            _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].Border:SetVertexColor(0, 1, 0)
+        local borderColor = {r=0, g=0, b=0}
+        if auraType == "Debuff" then
+            borderColor = {r=1, g=0, b=0}
+        elseif aura.source == "player" then
+            borderColor = {r=0, g=1, b=0}
         else
-            _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].Border:SetVertexColor(1, 1, 1)
+            borderColor = {r=0, g=0, b=0}
         end
+        _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].Border:SetVertexColor(borderColor.r, borderColor.g, borderColor.b)
         _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].CooldownText:SetText(timetext)
         _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].CountText:SetText(counttext)
     else
