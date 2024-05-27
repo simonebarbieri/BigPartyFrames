@@ -1,5 +1,9 @@
 <Ui xmlns='http://www.blizzard.com/wow/ui/'>
-  <Include file='PartyStyle.lua'/>
-  <Include file='PartyAuras.lua'/>
-  <Include file='PartyAurasMasque.lua'/>
+  <Script file='BigPartyMemberFrame.lua'/>
+  <Script file='BigPartyFrame.lua'/>
+  <Script file='PartyStyle.lua'/>
+  <Script file='PartyAuras.lua'/>
+  <Script file='PartyAurasMasque.lua'/>
+  <Include file='BigPartyMemberFrameTemplate.xml'/>
+  <Include file='BigPartyFrame.xml'/>
 </Ui>

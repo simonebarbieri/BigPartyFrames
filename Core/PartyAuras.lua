@@ -1,17 +1,17 @@
 local partyAuras = CreateFrame("Frame")
 
 local function CreateAura(partyMember, auraIndex, auraType, anchor, x, y)
-    local aura = CreateFrame("Button", "BPF_PartyMemberFrame"..partyMember..auraType..auraIndex, _G["PartyFrame"]["MemberFrame"..partyMember])
+    local aura = CreateFrame("Button", "BPF_PartyMemberFrame"..partyMember..auraType..auraIndex, _G["BigPartyFrame"]["MemberFrame"..partyMember])
 
     aura:SetFrameLevel(7)
-    aura:SetWidth(partyStyle.aura_size)
-    aura:SetHeight(partyStyle.aura_size)
+    aura:SetWidth(15)
+    aura:SetHeight(15)
     aura:SetID(auraIndex)
     aura:ClearAllPoints()
     if auraIndex == 1 then
-        aura:SetPoint("RIGHT", _G["PartyFrame"]["MemberFrame"..partyMember], anchor, x, y)
+        aura:SetPoint("RIGHT", _G["BigPartyFrame"]["MemberFrame"..partyMember], anchor, x, y)
     else
-        aura:SetPoint("LEFT", _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex-1], "RIGHT", partyStyle.aura_spacing, 0)
+        aura:SetPoint("LEFT", _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex-1], "RIGHT", 4, 0)
     end
     aura:SetAttribute("unit", "party"..partyMember)
     RegisterUnitWatch(aura)
@@ -56,10 +56,10 @@ end
 function BPF:InitializeAuras(maxBuffs, maxDebuffs)
     for partyMember = 1, MAX_PARTY_MEMBERS do
         for auraIndex = 1, maxBuffs do
-            CreateAura(partyMember, auraIndex, "Buff", "TOPRIGHT", 20, -25)
+            CreateAura(partyMember, auraIndex, "Buff", "TOPRIGHT", 0, -35)
         end
         for auraIndex = 1, maxDebuffs do
-            CreateAura(partyMember, auraIndex, "Debuff", "BOTTOMRIGHT", 20, 20)
+            CreateAura(partyMember, auraIndex, "Debuff", "BOTTOMRIGHT", 0, 35)
         end
     end
 end

@@ -1,0 +1,23 @@
+<Ui xmlns='http://www.blizzard.com/wow/ui/'>
+	<Frame name="BigPartyFrame" mixin="BigPartyFrameMixin" inherits="VerticalLayoutFrame, EditModeUnitFrameSystemTemplate, PingTopLevelPassThroughAttributeTemplate" frameStrata="LOW" parent="UIParent" toplevel="true">
+		<KeyValues>
+			<KeyValue key="systemIndex" value="Enum.EditModeUnitFrameSystemIndices.Party" type="global"/>
+			<KeyValue key="systemNameString" value="HUD_EDIT_MODE_PARTY_FRAMES_LABEL" type="global"/>
+			<KeyValue key="defaultHideSelection" value="true" type="boolean"/>
+			<KeyValue key="bottomPadding" value="2" type="number"/>
+			<KeyValue key="breakSnappedFramesOnSave" value="true" type="boolean"/>
+			<KeyValue key="alwaysUseTopLeftAnchor" value="true" type="boolean"/>
+		</KeyValues>
+		<Anchors>
+			<Anchor point="TOPLEFT"/>
+		</Anchors>
+		<KeyValues>
+			<KeyValue key="spacing" value="-10" type="number"/>
+		</KeyValues>
+		<Scripts>
+			<OnLoad method="OnLoad" inherit="append"/>
+			<OnShow method="OnShow"/>
+			<OnEvent method="OnEvent"/>
+		</Scripts>
+	</Frame>
+</Ui>
