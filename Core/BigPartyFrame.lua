@@ -1,24 +1,52 @@
--- BigPartyFrame = CreateFrame("Frame", "BPF_PartyFrame")
 BigPartyFrameMixin = {}
 
 function BigPartyFrameMixin:OnLoad()
-	if C_GameModeManager.IsFeatureEnabled(Enum.GameModeFeatureSetting.ForcedPartyFrameScale) then
-		self:SetScale(C_GameModeManager.GetFeatureSetting(Enum.GameModeFeatureSetting.ForcedPartyFrameScale))
-	end
-
 	local function PartyMemberFrameReset(framePool, frame)
 		frame.layoutIndex = nil
 		FramePool_HideAndClearAnchors(framePool, frame)
 	end
 
 	self.PartyMemberFramePool = CreateFramePool("BUTTON", self, "BigPartyMemberFrameTemplate", PartyMemberFrameReset)
+
 	self:RegisterEvent("GROUP_ROSTER_UPDATE")
+	self:RegisterForDrag("LeftButton")
+	self:SetScript("OnDragStart", self.StartMoving)
+	self:SetScript("OnDragStop", function(self)
+		self:StopMovingOrSizing()
+		if BPF_DB then
+			local point, _, relativePoint, x, y = self:GetPoint()
+			BPF_DB.party_point = point
+			BPF_DB.party_relative_point = relativePoint
+			BPF_DB.party_position_x = x
+			BPF_DB.party_position_y = y
+		end
+	end)
+	BigPartyFrame_Lock()
+	BigPartyFrame_UpdateSettingFrameSize()
+	BigPartyFrame_UpdateSettingFramePoint()
 end
 
-function BigPartyFrameMixin:UpdateSystemSettingFrameSize()
-	if not C_GameModeManager.IsFeatureEnabled(Enum.GameModeFeatureSetting.ForcedPartyFrameScale) then
-		EditModeUnitFrameSystemMixin.UpdateSystemSettingFrameSize(self)
+function BigPartyFrame_UpdateSettingFrameSize()
+	local scale = 1
+	if BPF_DB then
+		scale = BPF_DB.party_scale
 	end
+	BigPartyFrame:SetScale(scale)
+end
+
+function BigPartyFrame_UpdateSettingFramePoint()
+	local point = "TOPLEFT"
+	local relativePoint = "TOPLEFT"
+	local x = 0
+	local y = 0
+	if BPF_DB then
+		point = BPF_DB.party_point
+		relativePoint = BPF_DB.party_relative_point
+		x = BPF_DB.party_position_x
+		y = BPF_DB.party_position_y
+	end
+	BigPartyFrame:ClearAllPoints()
+	BigPartyFrame:SetPoint(point, UIParent, relativePoint, x, y)
 end
 
 function BigPartyFrameMixin:OnShow()
@@ -37,7 +65,7 @@ end
 function BigPartyFrameMixin:InitializePartyMemberFrames()
 	local memberFramesToSetup = {}
 
-	self:RegisterEvent("GROUP_ROSTER_UPDATE");
+	self:RegisterEvent("GROUP_ROSTER_UPDATE")
 	self:SetScript("OnEvent", function(self, event, ...)
 		self:UpdatePartyFrames()
 	end)
@@ -45,6 +73,19 @@ function BigPartyFrameMixin:InitializePartyMemberFrames()
 	self.PartyMemberFramePool:ReleaseAll()
 	for i = 1, MAX_PARTY_MEMBERS do
 		local memberFrame = self.PartyMemberFramePool:Acquire()
+
+		memberFrame:RegisterForDrag("LeftButton")
+		memberFrame:SetMovable(true)
+		memberFrame:SetScript("OnDragStart", function(self)
+			local f = BigPartyFrame:GetScript("OnDragStart")
+			if BigPartyFrame_IsUnlocked() then
+				f(BigPartyFrame)
+			end
+		end)
+		memberFrame:SetScript("OnDragStop", function(self)
+			local f = BigPartyFrame:GetScript("OnDragStop")
+			f(BigPartyFrame) -- run it
+		end)
 
 		-- Set for debugging purposes.
 		memberFrame:SetParentKey("MemberFrame"..i)
@@ -74,33 +115,6 @@ function BigPartyFrameMixin:UpdateMemberFrames()
 	self:Layout()
 end
 
-function BigPartyFrameMixin:UpdatePartyMemberBackground()
-	if not self.Background then
-		return
-	end
-
-	if not self:ShouldShow() or not EditModeManagerFrame:ShouldShowPartyFrameBackground() then
-		self.Background:Hide()
-		return
-	end
-
-	local numMembers = EditModeManagerFrame:ArePartyFramesForcedShown() and MAX_PARTY_MEMBERS or GetNumSubgroupMembers()
-	if numMembers > 0 then
-		for memberFrame in self.PartyMemberFramePool:EnumerateActive() do 
-			if memberFrame.layoutIndex == numMembers then
-				if memberFrame.PetFrame:IsShown() then
-					self.Background:SetPoint("BOTTOMLEFT", memberFrame, "BOTTOMLEFT", -5, -21)
-				else
-					self.Background:SetPoint("BOTTOMLEFT", memberFrame, "BOTTOMLEFT", -5, -5)
-				end
-			end
-		end
-		self.Background:Show()
-	else
-		self.Background:Hide()
-	end
-end
-
 function BigPartyFrameMixin:HidePartyFrames()
 	for memberFrame in self.PartyMemberFramePool:EnumerateActive() do
 		memberFrame:Hide()
@@ -125,6 +139,35 @@ function BigPartyFrameMixin:UpdatePartyFrames()
 		end
 	end
 
-	self:UpdatePartyMemberBackground()
 	self:UpdatePaddingAndLayout()
+end
+
+function BigPartyFrame_Unlock()
+	BigPartyFrame:SetMovable(true)
+	-- self:SetFrameStrata("HIGH")
+	for i=1, MAX_PARTY_MEMBERS do
+		local PartyMemberFrame = BigPartyFrame["MemberFrame" .. i]
+		if PartyMemberFrame then
+			PartyMemberFrame:SetMovable(true)
+		end
+	end
+end
+
+function BigPartyFrame_Lock()
+	BigPartyFrame:SetMovable(false)
+	-- self:SetFrameStrata("LOW")
+	for i=1, MAX_PARTY_MEMBERS do
+		local PartyMemberFrame = BigPartyFrame["MemberFrame" .. i]
+		if PartyMemberFrame then
+			PartyMemberFrame:SetMovable(false)
+		end
+	end
+end
+
+function BigPartyFrame_IsLocked()
+	return not BigPartyFrame:IsMovable()
+end
+
+function BigPartyFrame_IsUnlocked()
+	return BigPartyFrame:IsMovable()
 end

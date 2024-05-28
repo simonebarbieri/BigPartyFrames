@@ -202,9 +202,6 @@
 					<OnLeave inherit="prepend">
 						self:GetParent():OnLeave();
 					</OnLeave>
-					<!-- <OnMouseUp>
-						self:GetParent():Click(button);
-					</OnMouseUp> -->
 				</Scripts>
 				<BarTexture atlas="UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana"/>
 			</StatusBar>

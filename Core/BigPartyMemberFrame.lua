@@ -43,12 +43,12 @@ function BigPartyMemberFrameMixin:ToPlayerArt()
 	self.ManaBar:SetPoint("TOPLEFT", 85, -61)
 
 	self.ManaBar.ManaBarMask:SetWidth(128)
-	self.ManaBar.ManaBarMask:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana-Mask", TextureKitConstants.UseAtlasSize);
+	self.ManaBar.ManaBarMask:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana-Mask", TextureKitConstants.UseAtlasSize)
 
 	self:UpdateNameTextAnchors()
 
-	UnitFrame_SetUnit(self, self.unit, self.HealthBar, self.ManaBar)
-	UnitFrame_Update(self, true)
+	securecall("UnitFrame_SetUnit", self, self.unit, self.HealthBar, self.ManaBar)
+	securecall("UnitFrame_Update", self, true)
 end
 
 function BigPartyMemberFrameMixin:ToVehicleArt()
@@ -58,33 +58,33 @@ function BigPartyMemberFrameMixin:ToVehicleArt()
 	self.Texture:Hide()
 	self.VehicleTexture:Show()
 
-	self.Flash:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Vehicle-InCombat", TextureKitConstants.UseAtlasSize);
-	self.Flash:SetPoint("CENTER", frameFlash:GetParent(), "CENTER", -3.5, 1);
+	self.Flash:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Vehicle-InCombat", TextureKitConstants.UseAtlasSize)
+	self.Flash:SetPoint("CENTER", frameFlash:GetParent(), "CENTER", -3.5, 1)
 
-	self.PartyMemberOverlay.Status:SetAtlas("UI-HUD-UnitFrame-Party-PortraitOn-Vehicle-Status", TextureKitConstants.UseAtlasSize)
+	self.PartyMemberOverlay.Status:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Vehicle-Status", TextureKitConstants.UseAtlasSize)
 	self.PartyMemberOverlay.Status:SetPoint("TOPLEFT", self, "TOPLEFT", -3, 3)
 
-	self.HealthBar.HealthBarTexture:SetAtlas("UI-HUD-UnitFrame-Party-PortraitOn-Vehicle-Bar-Health", TextureKitConstants.UseAtlasSize)
-	self.HealthBar:SetWidth(118);
-	self.HealthBar:SetHeight(20);
-	self.HealthBar:SetPoint("TOPLEFT", 91, -40);
+	self.HealthBar.HealthBarTexture:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Vehicle-Bar-Health", TextureKitConstants.UseAtlasSize)
+	self.HealthBar:SetWidth(118)
+	self.HealthBar:SetHeight(20)
+	self.HealthBar:SetPoint("TOPLEFT", 91, -40)
 	self:UpdateHealthBarTextAnchors()
 
 	-- Party frames when in a vehicle do not have a mask for the health bar, so remove any applied target mask that would not fit.
-	self.HealthBar.HealthBarMask:SetPoint("TOPLEFT", healthBar.HealthBarMask:GetParent(), "TOPLEFT", -8, 6);
+	self.HealthBar.HealthBarMask:SetPoint("TOPLEFT", healthBar.HealthBarMask:GetParent(), "TOPLEFT", -8, 6)
 
-	self.ManaBar:SetWidth(118);
-	self.ManaBar:SetHeight(10);
-	self.ManaBar:SetPoint("TOPLEFT",91,-61);
+	self.ManaBar:SetWidth(118)
+	self.ManaBar:SetHeight(10)
+	self.ManaBar:SetPoint("TOPLEFT",91,-61)
 	self:UpdateManaBarTextAnchors()
 
-	self.ManaBar.ManaBarMask:SetWidth(121);
-	self.ManaBar.ManaBarMask:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana-Mask");
+	self.ManaBar.ManaBarMask:SetWidth(121)
+	self.ManaBar.ManaBarMask:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Bar-Mana-Mask")
 
 	self:UpdateNameTextAnchors()
 
-	UnitFrame_SetUnit(self, self.petUnitToken, self.HealthBar, self.ManaBar)
-	UnitFrame_Update(self, true)
+	securecall("UnitFrame_SetUnit", self, self.petUnitToken, self.HealthBar, self.ManaBar)
+	securecall("UnitFrame_Update", self, true)
 end
 
 function BigPartyMemberFrameMixin:UpdateHealthBarTextAnchors()
@@ -94,11 +94,6 @@ function BigPartyMemberFrameMixin:UpdateHealthBarTextAnchors()
 		healthBarTextOffsetY = 1
 	elseif (LOCALE_zhCN) then
 		healthBarTextOffsetY = 2
-	end
-
-	if (UNIT_FRAME_SHOW_HEALTH_ONLY) then
-		healthBarTextOffsetX = 2
-		healthBarTextOffsetY = healthBarTextOffsetY + 3
 	end
 
 	self.HealthBar.CenterText:SetPoint("CENTER", self.HealthBar, "CENTER", 0, healthBarTextOffsetY)
@@ -126,9 +121,9 @@ end
 
 function BigPartyMemberFrameMixin:UpdateNameTextAnchors()
 	if(self.state == "player") then
-		self.Name:SetPoint("TOPLEFT", 88, -27);
+		self.Name:SetPoint("TOPLEFT", 88, -27)
 	else
-		self.Name:SetPoint("TOPLEFT", 96, -27);
+		self.Name:SetPoint("TOPLEFT", 96, -27)
 	end
 end
 
@@ -225,18 +220,12 @@ function BigPartyMemberFrameMixin:VoiceActivityNotificationCreatedCallback(notif
 end
 
 function BigPartyMemberFrameMixin:UpdateMember()
-	if not PartyFrame:ShouldShow() then
-		self:Hide()
-		PartyFrame:UpdatePartyMemberBackground()
-		return
-	end
-
 	local showFrame
 	if EditModeManagerFrame:ArePartyFramesForcedShown() and not UnitExists(self.unitToken) then
-		UnitFrame_SetUnit(self, "player", self.HealthBar, self.ManaBar)
+		securecall("UnitFrame_SetUnit", self, "player", self.HealthBar, self.ManaBar)
 		showFrame = true
 	else
-		UnitFrame_SetUnit(self, self.unitToken, self.HealthBar, self.ManaBar)
+		securecall("UnitFrame_SetUnit", self, self.unitToken, self.HealthBar, self.ManaBar)
 		showFrame = UnitExists(self.unitToken)
 	end
 	if showFrame then
@@ -247,7 +236,7 @@ function BigPartyMemberFrameMixin:UpdateMember()
 			VoiceActivityManager:RegisterFrameForVoiceActivityNotifications(self, guid, nil, "VoiceActivityNotificationPartyTemplate", "Button", PartyMemberFrameMixin.VoiceActivityNotificationCreatedCallback)
 		end
 
-		UnitFrame_Update(self, true)
+		securecall("UnitFrame_Update", self, true)
 	else
 		if VoiceActivityManager then
 			VoiceActivityManager:UnregisterFrameForVoiceActivityNotifications(self)
@@ -255,13 +244,21 @@ function BigPartyMemberFrameMixin:UpdateMember()
 		end
 		self:Hide()
 	end
+
+	inRange, _ = UnitInRange(self.unit)
+
+    if inRange then
+        self:SetAlpha(1.0)
+    else
+        self:SetAlpha(0.30)
+    end
+
 	self:UpdatePvPStatus()
 	self:UpdateVoiceStatus()
 	self:UpdateReadyCheck()
 	self:UpdateOnlineStatus()
 	self:UpdateNotPresentIcon()
 	self:UpdateArt()
-	PartyFrame:UpdatePartyMemberBackground()
 end
 
 function BigPartyMemberFrameMixin:UpdateMemberHealth(elapsed)
@@ -419,13 +416,13 @@ function BigPartyMemberFrameMixin:UpdateNotPresentIcon()
 end
 
 function BigPartyMemberFrameMixin:OnEvent(event, ...)
-	UnitFrame_OnEvent(self, event, ...)
+	securecall("UnitFrame_OnEvent", self, event, ...)
 
 	local arg1, arg2, arg3 = ...
 	local selfID = self.layoutIndex
 
 	if event == "UNIT_NAME_UPDATE" then
-		UnitFrame_Update(self,true)
+		securecall("UnitFrame_Update", self, true)
 	elseif event == "PLAYER_ENTERING_WORLD" then
 		if UnitExists(self:GetUnit()) then
 			self:UpdateMember()
@@ -451,9 +448,6 @@ function BigPartyMemberFrameMixin:OnEvent(event, ...)
 	elseif event == "READY_CHECK_FINISHED" then
 		if UnitExists(self:GetUnit()) then
 			local finishTime = DEFAULT_READY_CHECK_STAY_TIME
-			if not PartyFrame:ShouldShow() then
-				finishTime = 0
-			end
 			ReadyCheck_Finish(self.ReadyCheck, finishTime)
 		end
 	elseif event == "UNIT_ENTERED_VEHICLE" then

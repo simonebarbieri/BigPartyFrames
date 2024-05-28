@@ -4,10 +4,16 @@ function BPF:OnInitialize()
     -- Database Default profile
     local defaults = {
         profile = {
-          use_class_portraits = true,
-          remove_realm_name = true,
-          max_party_buffs = 10,
-          max_party_debuffs = 10,
+            party_point = "TOPLEFT",
+            party_relative_point = "TOPLEFT",
+            party_position_x = 0,
+            party_position_y = 0,
+            party_locked = true,
+            party_scale = 1,
+            use_class_portraits = true,
+            remove_realm_name = true,
+            max_party_buffs = 10,
+            max_party_debuffs = 10,
         }
     }
 
@@ -16,4 +22,7 @@ function BPF:OnInitialize()
 
     -- Assign DB to a global variable
     BPF_DB = self.db.profile
+
+	BigPartyFrame_UpdateSettingFrameSize()
+	BigPartyFrame_UpdateSettingFramePoint()
 end

@@ -53,17 +53,6 @@ local function CreateAura(partyMember, auraIndex, auraType, anchor, x, y)
     end)
 end
 
-function BPF:InitializeAuras(maxBuffs, maxDebuffs)
-    for partyMember = 1, MAX_PARTY_MEMBERS do
-        for auraIndex = 1, maxBuffs do
-            CreateAura(partyMember, auraIndex, "Buff", "TOPRIGHT", 0, -35)
-        end
-        for auraIndex = 1, maxDebuffs do
-            CreateAura(partyMember, auraIndex, "Debuff", "BOTTOMRIGHT", 0, 35)
-        end
-    end
-end
-
 local function GetSortedAuras(partyMember, auraType)
     local sortedAuras = {}
     local auraIndex = 1
@@ -122,6 +111,17 @@ local function SetAura(aura, auraType, partyMember, auraIndex)
     else
         CooldownFrame_Clear(_G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].Cooldown)
         _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex]:SetAlpha(0)
+    end
+end
+
+function BPF:InitializeAuras(maxBuffs, maxDebuffs)
+    for partyMember = 1, MAX_PARTY_MEMBERS do
+        for auraIndex = 1, maxBuffs do
+            CreateAura(partyMember, auraIndex, "Buff", "TOPRIGHT", 0, -35)
+        end
+        for auraIndex = 1, maxDebuffs do
+            CreateAura(partyMember, auraIndex, "Debuff", "BOTTOMRIGHT", 0, 35)
+        end
     end
 end
 
