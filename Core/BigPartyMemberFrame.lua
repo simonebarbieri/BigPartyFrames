@@ -15,6 +15,9 @@ function BigPartyMemberFrameMixin:UpdateArt()
 end
 
 function BigPartyMemberFrameMixin:ToPlayerArt()
+    if self:IsForbidden() then return end
+    if InCombatLockdown() then return end
+
 	self.state = "player"
 	self.overrideUnit = nil
 
@@ -52,6 +55,9 @@ function BigPartyMemberFrameMixin:ToPlayerArt()
 end
 
 function BigPartyMemberFrameMixin:ToVehicleArt()
+    if self:IsForbidden() then return end
+    if InCombatLockdown() then return end
+
 	self.state = "vehicle"
 	self.overrideUnit = self.unit
 
@@ -59,7 +65,7 @@ function BigPartyMemberFrameMixin:ToVehicleArt()
 	self.VehicleTexture:Show()
 
 	self.Flash:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Vehicle-InCombat", TextureKitConstants.UseAtlasSize)
-	self.Flash:SetPoint("CENTER", frameFlash:GetParent(), "CENTER", -3.5, 1)
+	self.Flash:SetPoint("CENTER", self.Flash:GetParent(), "CENTER", -3.5, 1)
 
 	self.PartyMemberOverlay.Status:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Vehicle-Status", TextureKitConstants.UseAtlasSize)
 	self.PartyMemberOverlay.Status:SetPoint("TOPLEFT", self, "TOPLEFT", -3, 3)
@@ -71,7 +77,7 @@ function BigPartyMemberFrameMixin:ToVehicleArt()
 	self:UpdateHealthBarTextAnchors()
 
 	-- Party frames when in a vehicle do not have a mask for the health bar, so remove any applied target mask that would not fit.
-	self.HealthBar.HealthBarMask:SetPoint("TOPLEFT", healthBar.HealthBarMask:GetParent(), "TOPLEFT", -8, 6)
+	self.HealthBar.HealthBarMask:SetPoint("TOPLEFT", self.HealthBar.HealthBarMask:GetParent(), "TOPLEFT", -8, 6)
 
 	self.ManaBar:SetWidth(118)
 	self.ManaBar:SetHeight(10)
@@ -245,13 +251,7 @@ function BigPartyMemberFrameMixin:UpdateMember()
 		self:Hide()
 	end
 
-	inRange, _ = UnitInRange(self.unit)
-
-    if inRange then
-        self:SetAlpha(1.0)
-    else
-        self:SetAlpha(0.30)
-    end
+	self:UpdateDistance()
 
 	self:UpdatePvPStatus()
 	self:UpdateVoiceStatus()
@@ -281,6 +281,16 @@ function BigPartyMemberFrameMixin:UpdateMemberHealth(elapsed)
 		end
 		self.Portrait:SetAlpha(alpha)
 	end
+end
+
+function BigPartyMemberFrameMixin:UpdateDistance()
+	inRange, _ = UnitInRange(self.unit)
+
+    if inRange then
+        self:SetAlpha(1.0)
+    else
+        self:SetAlpha(0.30)
+    end
 end
 
 function BigPartyMemberFrameMixin:UpdateLeader()
@@ -475,6 +485,8 @@ function BigPartyMemberFrameMixin:OnEvent(event, ...)
 	elseif event == "INCOMING_SUMMON_CHANGED" then
 		self:UpdateNotPresentIcon()
 	end
+
+	self:UpdateDistance()
 end
 
 function BigPartyMemberFrameMixin:OnUpdate(elapsed)

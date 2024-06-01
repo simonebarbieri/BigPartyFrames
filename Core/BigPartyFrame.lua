@@ -59,7 +59,7 @@ function BigPartyFrameMixin:OnEvent(event, ...)
 end
 
 function BigPartyFrameMixin:ShouldShow()
-	return ShouldShowPartyFrames() and not EditModeManagerFrame:UseRaidStylePartyFrames()
+	return ShouldShowPartyFrames()
 end
 
 function BigPartyFrameMixin:InitializePartyMemberFrames()
@@ -132,7 +132,6 @@ function BigPartyFrameMixin:UpdatePartyFrames()
 	local showPartyFrames = self:ShouldShow()
 	for memberFrame in self.PartyMemberFramePool:EnumerateActive() do
 		if showPartyFrames then
-			memberFrame:Show()
 			memberFrame:UpdateMember()
 		else
 			memberFrame:Hide()
@@ -144,7 +143,6 @@ end
 
 function BigPartyFrame_Unlock()
 	BigPartyFrame:SetMovable(true)
-	-- self:SetFrameStrata("HIGH")
 	for i=1, MAX_PARTY_MEMBERS do
 		local PartyMemberFrame = BigPartyFrame["MemberFrame" .. i]
 		if PartyMemberFrame then
@@ -155,7 +153,6 @@ end
 
 function BigPartyFrame_Lock()
 	BigPartyFrame:SetMovable(false)
-	-- self:SetFrameStrata("LOW")
 	for i=1, MAX_PARTY_MEMBERS do
 		local PartyMemberFrame = BigPartyFrame["MemberFrame" .. i]
 		if PartyMemberFrame then

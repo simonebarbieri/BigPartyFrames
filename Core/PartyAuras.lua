@@ -1,7 +1,10 @@
-local partyAuras = CreateFrame("Frame")
+BPF.PartyAuras = CreateFrame("Frame", "BPF_PartyAuras")
 
 local function CreateAura(partyMember, auraIndex, auraType, anchor, x, y)
-    local aura = CreateFrame("Button", "BPF_PartyMemberFrame"..partyMember..auraType..auraIndex, _G["BigPartyFrame"]["MemberFrame"..partyMember])
+    local partyMemberAuraFrame = "BPF_PartyAuras"..partyMember..auraType
+    local auraButtonName = partyMemberAuraFrame..auraIndex
+
+    local aura = CreateFrame("Button", auraButtonName, _G["BigPartyFrame"]["MemberFrame"..partyMember])
 
     aura:SetFrameLevel(7)
     aura:SetWidth(15)
@@ -11,15 +14,15 @@ local function CreateAura(partyMember, auraIndex, auraType, anchor, x, y)
     if auraIndex == 1 then
         aura:SetPoint("RIGHT", _G["BigPartyFrame"]["MemberFrame"..partyMember], anchor, x, y)
     else
-        aura:SetPoint("LEFT", _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex-1], "RIGHT", 4, 0)
+        aura:SetPoint("LEFT", _G[partyMemberAuraFrame..auraIndex-1], "RIGHT", 4, 0)
     end
     aura:SetAttribute("unit", "party"..partyMember)
     RegisterUnitWatch(aura)
 
-    aura.Icon = aura:CreateTexture("BPF_PartyMemberFrame"..partyMember..auraType..auraIndex.."Icon", "ARTWORK")
+    aura.Icon = aura:CreateTexture(auraButtonName.."Icon", "ARTWORK")
     aura.Icon:SetAllPoints(aura)
 
-    aura.Cooldown = CreateFrame("Cooldown", "BPF_PartyMemberFrame"..partyMember..auraType..auraIndex.."Cooldown", aura, "CooldownFrameTemplate")
+    aura.Cooldown = CreateFrame("Cooldown", auraButtonName.."Cooldown", aura, "CooldownFrameTemplate")
     aura.Cooldown:SetFrameLevel(8)
     aura.Cooldown:SetReverse(true)
     aura.Cooldown:ClearAllPoints()
@@ -27,19 +30,19 @@ local function CreateAura(partyMember, auraIndex, auraType, anchor, x, y)
     aura.Cooldown:SetParent(aura)
     aura.Cooldown:SetHideCountdownNumbers(true)
 
-    aura.CooldownText = aura.Cooldown:CreateFontString("BPF_PartyMemberFrame"..partyMember..auraType..auraIndex.."CooldownText", "OVERLAY")
+    aura.CooldownText = aura.Cooldown:CreateFontString(auraButtonName.."CooldownText", "OVERLAY")
     aura.CooldownText:SetFont(GameFontNormal:GetFont(), 6, "OUTLINE")
     aura.CooldownText:SetTextColor(1, 1, 1)--(1, 0.75, 0)
     aura.CooldownText:ClearAllPoints()
     aura.CooldownText:SetPoint("BOTTOM", aura.Icon, "CENTER", 0, -15)
 
-    aura.CountText = aura.Cooldown:CreateFontString("BPF_PartyMemberFrame"..partyMember..auraType..auraIndex.."CountText", "OVERLAY")
+    aura.CountText = aura.Cooldown:CreateFontString(auraButtonName.."CountText", "OVERLAY")
     aura.CountText:SetFont(GameFontNormal:GetFont(), 6, "OUTLINE")
     aura.CountText:SetTextColor(1, 1, 1)
     aura.CountText:ClearAllPoints()
     aura.CountText:SetPoint("CENTER", aura.Icon, "TOPRIGHT", 0, 0)
 
-    aura.Border = aura:CreateTexture("BPF_PartyMemberFrame"..partyMember..auraType..auraIndex.."Border", "OVERLAY")
+    aura.Border = aura:CreateTexture(auraButtonName.."Border", "OVERLAY")
     aura.Border:SetTexture("Interface\\Buttons\\UI-Debuff-Overlays")
     aura.Border:SetWidth(17)
     aura.Border:SetHeight(17)
@@ -71,8 +74,13 @@ local function GetSortedAuras(partyMember, auraType)
 end
 
 local function SetAura(aura, auraType, partyMember, auraIndex)
+    local partyMemberAuraFrame = "BPF_PartyAuras"..partyMember..auraType
+    local auraButtonName = partyMemberAuraFrame..auraIndex
+
+    local auraButton = _G[auraButtonName]
+
     if aura then
-        _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex]:SetScript("OnEnter",function(self)
+        auraButton:SetScript("OnEnter",function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:SetUnitAura("party"..partyMember, aura.auraIndex, auraType == "Buff" and "HELPFUL" or "HARMFUL")
         end)
@@ -82,9 +90,9 @@ local function SetAura(aura, auraType, partyMember, auraIndex)
         if aura.count > 1 then
             counttext = aura.count
         end
-        _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].Icon:SetTexture(aura.icon)
-        _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex]:SetAlpha(1)
-        CooldownFrame_Set(_G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].Cooldown, aura.expires - aura.duration, aura.duration, true)
+        auraButton.Icon:SetTexture(aura.icon)
+        auraButton:SetAlpha(1)
+        CooldownFrame_Set(auraButton.Cooldown, aura.expires - aura.duration, aura.duration, true)
         if aura.duration > 0 then
             local timeleft = aura.expires - GetTime()
             local alpha = 1
@@ -93,9 +101,9 @@ local function SetAura(aura, auraType, partyMember, auraIndex)
             elseif timeleft > 60 then
                 timetext = math.floor(timeleft/60) .. "m"
             else
-                timetext = math.floor(timeleft)
+                timetext = tostring(math.floor(timeleft))
             end
-            _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].CooldownText:SetAlpha(alpha)
+            auraButton.CooldownText:SetAlpha(alpha)
         end
         local borderColor = {r=0, g=0, b=0}
         if auraType == "Debuff" then
@@ -105,52 +113,49 @@ local function SetAura(aura, auraType, partyMember, auraIndex)
         else
             borderColor = {r=0, g=0, b=0}
         end
-        _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].Border:SetVertexColor(borderColor.r, borderColor.g, borderColor.b)
-        _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].CooldownText:SetText(timetext)
-        _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].CountText:SetText(counttext)
+        auraButton.Border:SetVertexColor(borderColor.r, borderColor.g, borderColor.b)
+        auraButton.CooldownText:SetText(timetext)
+        auraButton.CountText:SetText(counttext)
     else
-        CooldownFrame_Clear(_G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex].Cooldown)
-        _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex]:SetAlpha(0)
+        CooldownFrame_Clear(auraButton.Cooldown)
+        auraButton:SetAlpha(0)
     end
 end
 
-function BPF:InitializeAuras(maxBuffs, maxDebuffs)
+function BPF:AurasUpdate()
     for partyMember = 1, MAX_PARTY_MEMBERS do
-        for auraIndex = 1, maxBuffs do
-            CreateAura(partyMember, auraIndex, "Buff", "TOPRIGHT", 0, -35)
-        end
-        for auraIndex = 1, maxDebuffs do
-            CreateAura(partyMember, auraIndex, "Debuff", "BOTTOMRIGHT", 0, 35)
+        if UnitExists("party"..partyMember) then
+            -- sort buffs by duration and add them from the shortest to the longest
+            local sortedBuffs = GetSortedAuras(partyMember, "HELPFUL")
+            for auraIndex = 1, BPF_DB.MaxBuffs do
+                SetAura(sortedBuffs[auraIndex], "Buff", partyMember, auraIndex)
+            end
+            local sortedDebuffs = GetSortedAuras(partyMember, "HARMFUL")
+            for auraIndex = 1, BPF_DB.MaxDebuffs do
+                SetAura(sortedDebuffs[auraIndex], "Debuff", partyMember, auraIndex)
+            end
         end
     end
-end
-
-function BPF:SetPartyAuras(maxBuffs, maxDebuffs)
-    partyAuras:SetScript("OnUpdate", function(self, elapsed)
-        self.timer = (self.timer or 0) + elapsed
-        if self.timer >= 0.1 then
-            for partyMember = 1, MAX_PARTY_MEMBERS do
-                if UnitExists("party"..partyMember) then
-                    -- sort buffs by duration and add them from the shortest to the longest
-                    local sortedBuffs = GetSortedAuras(partyMember, "HELPFUL")
-                    for auraIndex = 1, maxBuffs do
-                        SetAura(sortedBuffs[auraIndex], "Buff", partyMember, auraIndex)
-                    end
-                    local sortedDebuffs = GetSortedAuras(partyMember, "HARMFUL")
-                    for auraIndex = 1, maxDebuffs do
-                        SetAura(sortedDebuffs[auraIndex], "Debuff", partyMember, auraIndex)
-                    end
-                end
-            end
-            self.timer = 0
-        end
-    end)
 end
 
 function BPF:EnablePartyAuras()
-    local maxBuffs = BPF_DB.max_party_buffs
-    local maxDebuffs = BPF_DB.max_party_debuffs
+    BPF_DB.MaxBuffs = BPF_DB.max_party_buffs
+    BPF_DB.MaxDebuffs = BPF_DB.max_party_debuffs
 
-    BPF:InitializeAuras(maxBuffs, maxDebuffs)
-    BPF:SetPartyAuras(maxBuffs, maxDebuffs)
+    for partyMember = 1, MAX_PARTY_MEMBERS do
+        for auraIndex = 1, BPF_DB.MaxBuffs do
+            CreateAura(partyMember, auraIndex, "Buff", "TOPRIGHT", 0, -35)
+        end
+        for auraIndex = 1, BPF_DB.MaxDebuffs do
+            CreateAura(partyMember, auraIndex, "Debuff", "BOTTOMRIGHT", 0, 35)
+        end
+    end
+
+    BPF.PartyAuras:SetScript("OnUpdate", function(self, elapsed)
+        self.timer = (self.timer or 0) + elapsed
+        if self.timer >= 0.1 then
+            BPF:AurasUpdate()
+            self.timer = 0
+        end
+    end)
 end

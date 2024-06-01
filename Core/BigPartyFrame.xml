@@ -1,17 +1,12 @@
 <Ui xmlns='http://www.blizzard.com/wow/ui/'>
 	<Frame name="BigPartyFrame" mixin="BigPartyFrameMixin" inherits="VerticalLayoutFrame, PingTopLevelPassThroughAttributeTemplate" frameStrata="LOW" parent="UIParent" toplevel="true">
 		<KeyValues>
-			<KeyValue key="defaultHideSelection" value="true" type="boolean"/>
 			<KeyValue key="bottomPadding" value="2" type="number"/>
-			<KeyValue key="breakSnappedFramesOnSave" value="true" type="boolean"/>
-			<KeyValue key="alwaysUseTopLeftAnchor" value="true" type="boolean"/>
+			<KeyValue key="spacing" value="-10" type="number"/>
 		</KeyValues>
 		<Anchors>
 			<Anchor point="TOPLEFT"/>
 		</Anchors>
-		<KeyValues>
-			<KeyValue key="spacing" value="-10" type="number"/>
-		</KeyValues>
 		<Scripts>
 			<OnLoad method="OnLoad" inherit="append"/>
 			<OnShow method="OnShow"/>

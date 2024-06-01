@@ -1,12 +1,15 @@
 local function ApplyMasque(partyMember, auraIndex, auraType, group)
-    local aura = _G["BPF_PartyMemberFrame"..partyMember..auraType..auraIndex]
+    local partyMemberAuraFrame = "BPF_PartyAuras"..partyMember..auraType
+    local auraButtonName = partyMemberAuraFrame..auraIndex
+
+    local auraButton = _G[auraButtonName]
 
     local auraData = {
-        Icon = aura.Icon,
-        Border = aura.Border,
+        Icon = auraButton.Icon,
+        Border = auraButton.Border,
     }
 
-    group:AddButton(aura, auraData)
+    group:AddButton(auraButton, auraData)
 end
 
 function BPF:InitializeMasque()
