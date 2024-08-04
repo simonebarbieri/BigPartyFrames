@@ -1,8 +1,8 @@
 ## Title: Big Party Frames
 ## Notes: Use player frame for party members
 ## Author: Erian Kalil
-## Interface: 100207
-## Version: 1.0-beta4
+## Interface: 110000
+## Version: 1.0-beta5
 ## SavedVariables: BPFDB
 
 Libs\Load.xml

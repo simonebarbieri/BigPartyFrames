@@ -3,7 +3,7 @@ BigPartyFrameMixin = {}
 function BigPartyFrameMixin:OnLoad()
 	local function PartyMemberFrameReset(framePool, frame)
 		frame.layoutIndex = nil
-		FramePool_HideAndClearAnchors(framePool, frame)
+		Pool_HideAndClearAnchors(framePool, frame)
 	end
 
 	self.PartyMemberFramePool = CreateFramePool("BUTTON", self, "BigPartyMemberFrameTemplate", PartyMemberFrameReset)
