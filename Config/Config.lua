@@ -71,9 +71,28 @@ function BPF_Config:OnEnable()
                             return BPF_DB.use_class_portraits
                         end
                     },
-                    remove_realm_name = {
+                    use_class_color_healthbar = {
                         type = 'toggle',
                         order = 5,
+                        width = 'full',
+                        name = 'Use Class Color for the HealthBar',
+                        desc = 'Use class color for the healthbar instead of the green color',
+                        set = function(_, val)
+                            BPF_DB.use_class_color_healthbar = val
+                            for i=1, MAX_PARTY_MEMBERS do
+                                local PartyMemberFrame = BigPartyFrame["MemberFrame" .. i]
+                                if PartyMemberFrame then
+                                    BPF:HealthBarColor(PartyMemberFrame)
+                                end
+                            end
+                        end,
+                        get = function()
+                            return BPF_DB.use_class_color_healthbar
+                        end
+                    },
+                    remove_realm_name = {
+                        type = 'toggle',
+                        order = 6,
                         width = 'full',
                         name = 'Remove Realm From Name (*)',
                         desc = 'Remove the Realm name from the player\'s name',

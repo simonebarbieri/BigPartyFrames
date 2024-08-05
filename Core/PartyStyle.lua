@@ -34,6 +34,24 @@ function BPF:ClassPortraits(self)
     end
 end
 
+function BPF:HealthBarColor(self)
+    local class = select(2, UnitClass(self.unit))
+
+    if not class then
+        return
+    end
+
+    local hp_texture = self.HealthBar.HealthBarTexture
+    if BPF_DB.use_class_color_healthbar then
+        local classColor = C_ClassColor.GetClassColor(class)
+        hp_texture:SetAtlas("UI-HUD-UnitFrame-Party-PortraitOn-Bar-Health-Status", TextureKitConstants.UseAtlasSize)
+        hp_texture:SetVertexColor(classColor.r, classColor.g, classColor.b)
+    else
+        hp_texture:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Bar-Health", TextureKitConstants.UseAtlasSize)
+        hp_texture:SetVertexColor(1, 1, 1)
+    end
+end
+
 function BPF:EnablePartyStyle()
     PartyFrame:Hide()
 
@@ -45,6 +63,9 @@ function BPF:EnablePartyStyle()
             end)
             hooksecurefunc("UnitFrame_Update", function(self)
                 BPF:RemoveRealmFromName(self)
+            end)
+            hooksecurefunc(PartyMemberFrame, "ToPlayerArt", function(self)
+                BPF:HealthBarColor(self)
             end)
         end
     end

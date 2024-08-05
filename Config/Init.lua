@@ -11,6 +11,7 @@ function BPF:OnInitialize()
             party_locked = true,
             party_scale = 1,
             use_class_portraits = true,
+            use_class_color_healthbar = false,
             remove_realm_name = true,
             max_party_buffs = 10,
             max_party_debuffs = 10,
