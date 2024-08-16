@@ -4,12 +4,12 @@ function BPF:OnInitialize()
     -- Database Default profile
     local defaults = {
         profile = {
-            party_point = "TOPLEFT",
-            party_relative_point = "TOPLEFT",
-            party_position_x = 0,
-            party_position_y = 0,
-            party_locked = true,
-            party_scale = 1,
+            party = {
+                x = 0,
+                y = 0,
+                anchor = "TOPLEFT",
+                anchorTo = "TOPLEFT"
+            },
             use_class_portraits = true,
             use_class_color_healthbar = false,
             remove_realm_name = true,
@@ -24,6 +24,18 @@ function BPF:OnInitialize()
     -- Assign DB to a global variable
     BPF_DB = self.db.profile
 
-	BigPartyFrame_UpdateSettingFrameSize()
-	BigPartyFrame_UpdateSettingFramePoint()
+    local EditModeExpanded = LibStub("EditModeExpanded-1.0", true)
+
+	if EditModeExpanded then
+		if BPF_DB then
+			EditModeExpanded:RegisterFrame(BigPartyFrame, "Big Party Frame", BPF_DB.party, UIParent, BPF_DB.party.anchor, true)
+			EditModeExpanded:RegisterResizable(BigPartyFrame)
+		end
+	end
+end
+
+function BPF:OnEnable()
+    BPF:EnablePartyStyle()
+    BPF:EnablePartyAuras()
+    BPF:InitializeMasque()
 end

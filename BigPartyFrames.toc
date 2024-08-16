@@ -8,4 +8,3 @@
 Libs\Load.xml
 Config\Load.xml
 Core\Load.xml
-BigPartyFrames.lua

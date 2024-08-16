@@ -190,17 +190,20 @@ function BigPartyMemberFrameMixin:Setup()
 	self:RegisterEvent("INCOMING_SUMMON_CHANGED")
 	self:RegisterUnitEvent("UNIT_AURA", self.unitToken, self.petUnitToken)
 	self:RegisterUnitEvent("UNIT_PET",  self.unitToken, self.petUnitToken)
-	local showmenu = function()
-		ToggleDropDownMenu(1, nil, self.DropDown, self, 47, 15)
+
+	local function OpenContextMenu(frame, unit, button, isKeyPress)
+		local contextData =
+		{
+			unit = unit,
+		};
+		UnitPopup_OpenMenu("PARTY", contextData)
 	end
-	SecureUnitButton_OnLoad(self, self.unitToken, showmenu)
+
+	SecureUnitButton_OnLoad(self, self.unitToken, OpenContextMenu)
 
 	self:UpdateArt()
 	self:SetFrameLevel(2)
 	self:UpdateNotPresentIcon()
-
-	UIDropDownMenu_SetInitializeFunction(self.DropDown, PartyMemberFrameMixin.InitializePartyFrameDropDown)
-	UIDropDownMenu_SetDisplayMode(self.DropDown, "MENU")
 
 	UnitPowerBarAlt_Initialize(self.PowerBarAlt, self.unitToken, 0.5, "GROUP_ROSTER_UPDATE")
 
@@ -226,6 +229,11 @@ function BigPartyMemberFrameMixin:VoiceActivityNotificationCreatedCallback(notif
 end
 
 function BigPartyMemberFrameMixin:UpdateMember()
+	if not BigPartyFrame:ShouldShow() then
+		self:Hide()
+		return
+	end
+
 	local showFrame
 	if EditModeManagerFrame:ArePartyFramesForcedShown() and not UnitExists(self.unitToken) then
 		securecall("UnitFrame_SetUnit", self, "player", self.HealthBar, self.ManaBar)
@@ -550,9 +558,4 @@ function BigPartyMemberFrameMixin:PartyMemberHealthCheck(value)
 	else
 		self.Portrait:SetVertexColor(1.0, 1.0, 1.0, 1.0)
 	end
-end
-
-function BigPartyMemberFrameMixin:InitializePartyFrameDropDown()
-	local dropdown = UIDROPDOWNMENU_OPEN_MENU or self.DropDown
-	UnitPopup_ShowMenu(dropdown, "PARTY", "party"..dropdown:GetParent().layoutIndex)
 end
