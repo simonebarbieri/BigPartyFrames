@@ -59,10 +59,18 @@ end
 local function GetSortedAuras(partyMember, auraType)
     local sortedAuras = {}
     local auraIndex = 1
-    while UnitAura("party"..partyMember, auraIndex, auraType) do
-        local _, icon, count, _, duration, expires, source = UnitAura("party"..partyMember, auraIndex, auraType)
-        table.insert(sortedAuras, {icon=icon, count=count, duration=duration, expires=expires, source=source, auraIndex=auraIndex})
+    local auradata = C_UnitAuras.GetAuraDataByIndex("party"..partyMember, auraIndex, auraType)
+    while auradata do
+        table.insert(sortedAuras, {
+            icon=auradata.icon,
+            count=auradata.charges and auradata.charges or 0,
+            duration=auradata.duration,
+            expires=auradata.expirationTime,
+            source=auradata.sourceUnit,
+            auraIndex=auraIndex
+        })
         auraIndex = auraIndex + 1
+        auradata = C_UnitAuras.GetAuraDataByIndex("party"..partyMember, auraIndex, auraType)
     end
     table.sort(sortedAuras, function(a, b)
         if a.expires == 0 then return false end
