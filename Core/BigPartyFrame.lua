@@ -18,10 +18,13 @@ end
 
 function BigPartyFrameMixin:OnEvent(event, ...)
 	self:Layout()
+
+	self:Hide()
+	self:SetShown(self:ShouldShow())
 end
 
 function BigPartyFrameMixin:ShouldShow()
-	return ShouldShowPartyFrames()
+	return ShouldShowPartyFrames() or EditModeManagerFrame:ArePartyFramesForcedShown()
 end
 
 function BigPartyFrameMixin:InitializePartyMemberFrames()

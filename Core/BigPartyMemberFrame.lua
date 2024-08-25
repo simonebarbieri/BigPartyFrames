@@ -292,7 +292,7 @@ function BigPartyMemberFrameMixin:UpdateMemberHealth(elapsed)
 end
 
 function BigPartyMemberFrameMixin:UpdateDistance()
-	inRange, _ = UnitInRange(self.unit)
+	local inRange, _ = UnitInRange(self.unit)
 
     if inRange then
         self:SetAlpha(1.0)

@@ -1,5 +1,37 @@
 BPF = LibStub("AceAddon-3.0"):NewAddon("BPF", "AceConsole-3.0")
 
+local function SetupEditMode(defaultPosition)
+    local LEM = LibStub("LibEditMode")
+
+    local function onPositionChanged(frame, layoutName, point, x, y)
+        BPF_DB.party.point = point
+        BPF_DB.party.x = x
+        BPF_DB.party.y = y
+    end
+
+	if LEM then
+        LEM:AddFrame(BigPartyFrame, onPositionChanged, BPF_DB.party)
+	end
+
+    LEM:RegisterCallback('enter', function()
+        BigPartyFrame:Show()
+    end)
+    LEM:RegisterCallback('exit', function()
+        BigPartyFrame:SetShown(BigPartyFrame:ShouldShow())
+    end)
+    LEM:RegisterCallback('layout', function(layoutName)
+        if not BPF_DB then
+            BPF_DB = {}
+        end
+        if not BPF_DB.party then
+            BPF_DB.party = CopyTable(defaultPosition)
+        end
+
+        BigPartyFrame:ClearAllPoints()
+        BigPartyFrame:SetPoint(BPF_DB.party.point, BPF_DB.party.x, BPF_DB.party.y)
+    end)
+end
+
 function BPF:OnInitialize()
     -- Database Default profile
     local defaults = {
@@ -7,8 +39,7 @@ function BPF:OnInitialize()
             party = {
                 x = 0,
                 y = 0,
-                anchor = "TOPLEFT",
-                anchorTo = "TOPLEFT"
+                point = "CENTER"
             },
             use_class_portraits = true,
             use_class_color_healthbar = false,
@@ -24,14 +55,8 @@ function BPF:OnInitialize()
     -- Assign DB to a global variable
     BPF_DB = self.db.profile
 
-    local EditModeExpanded = LibStub("EditModeExpanded-1.0", true)
+    SetupEditMode(defaults.profile.party)
 
-	if EditModeExpanded then
-		if BPF_DB then
-			EditModeExpanded:RegisterFrame(BigPartyFrame, "Big Party Frame", BPF_DB.party, UIParent, BPF_DB.party.anchor, true)
-			EditModeExpanded:RegisterResizable(BigPartyFrame)
-		end
-	end
 end
 
 function BPF:OnEnable()

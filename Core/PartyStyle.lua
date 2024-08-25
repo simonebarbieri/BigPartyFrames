@@ -70,5 +70,5 @@ function BPF:EnablePartyStyle()
         end
     end
 
-    BigPartyFrame:Show()
+    BigPartyFrame:SetShown(BigPartyFrame:ShouldShow())
 end
